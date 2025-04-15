@@ -1,5 +1,6 @@
 package com.pro.app;
 
+// 주석샘플
 import com.pro.app.domain.DatasourceProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
