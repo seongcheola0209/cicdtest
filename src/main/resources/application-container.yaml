@@ -1,0 +1,9 @@
+datasource:
+  driver-class-name: "org.postgresql.Driver"
+  url: "jdbc:postgresql://postgresql:5430"
+  username: "local"
+  password: "local"
+
+volume-path:
+  persistent-volume-data: "/usr/src/myapp/files/dev/"
+  pod-volume-data: "/usr/src/myapp/tmp/"

@@ -1,0 +1,29 @@
+# 환경별 application.yaml 파일
+spring:
+  profiles:
+    active: local
+
+# App Port
+server:
+  port: 8080
+
+# App 정보
+application:
+  role: "ALL"
+  version: "Api Tester v1.0.0"
+
+# Database 접속 정보 위치 (Secret으로 주입)
+postgresql:
+  filepath: "/usr/src/myapp/datasource/postgresql-info.yaml"
+
+# Database 접속 정보
+datasource:
+  driver-class-name:
+  url:
+  username:
+  password:
+
+# Volume 위치
+volume-path:
+  persistent-volume-data: 
+  pod-volume-data:
