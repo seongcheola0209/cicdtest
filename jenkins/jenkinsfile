@@ -20,7 +20,7 @@ pipeline {
 
         // 아래 부분 수정(x)
         GITHUB_URL = "https://github.com/${GITHUB_USERNAME}/cicdtest.git"
-        PATH = "deploy/k8s"
+        CLASS_NAME = "deploy/k8s"
     }
     
     stages {
@@ -67,18 +67,18 @@ pipeline {
         stage('릴리즈파일 체크아웃') {
             steps {
                    checkout scmGit(branches: [[name: '*/main']], extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: 
-                                [[path: '/${PATH}']]]], userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest.git']])
+                                [[path: '/${CLASS_NAME}']]]], userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest.git']])
             }
         }
 
         stage('쿠버네티스 배포') {
             steps {
                 // K8S 배포
-                sh "kubectl apply -f ./${PATH}/namespace.yaml"
-                sh "kubectl apply -f ./${PATH}/configmap.yaml"
-                sh "kubectl apply -f ./${PATH}/secret.yaml"
-                sh "kubectl apply -f ./${PATH}/service.yaml"
-                sh "kubectl apply -f ./${PATH}/deployment.yaml"
+                sh "kubectl apply -f ./${CLASS_NAME}/namespace.yaml"
+                sh "kubectl apply -f ./${CLASS_NAME}/configmap.yaml"
+                sh "kubectl apply -f ./${CLASS_NAME}/secret.yaml"
+                sh "kubectl apply -f ./${CLASS_NAME}/service.yaml"
+                sh "kubectl apply -f ./${CLASS_NAME}/deployment.yaml"
             }
         }
 
@@ -88,11 +88,11 @@ pipeline {
                 sh "sleep 10"
 
                 // K8S 배포
-                sh "kubectl get -f ./${PATH}/namespace.yaml"
-                sh "kubectl get -f ./${PATH}/configmap.yaml"
-                sh "kubectl get -f ./${PATH}/secret.yaml"
-                sh "kubectl get -f ./${PATH}/service.yaml"
-                sh "kubectl get -f ./${PATH}/deployment.yaml"
+                sh "kubectl get -f ./${CLASS_NAME}/namespace.yaml"
+                sh "kubectl get -f ./${CLASS_NAME}/configmap.yaml"
+                sh "kubectl get -f ./${CLASS_NAME}/secret.yaml"
+                sh "kubectl get -f ./${CLASS_NAME}/service.yaml"
+                sh "kubectl get -f ./${CLASS_NAME}/deployment.yaml"
             }
         }
     }
