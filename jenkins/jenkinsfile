@@ -20,7 +20,7 @@ pipeline {
 
         // 아래 부분 수정(x)
         GITHUB_URL = "https://github.com/${GITHUB_USERNAME}/cicdtest.git"
-        PATH = 'deploy/k8s'
+        PATH = "deploy/k8s"
     }
     
     stages {
