@@ -66,10 +66,8 @@ pipeline {
 
         stage('릴리즈파일 체크아웃') {
             steps {
-                checkout scmGit(branches: [[name: '*/main']],
-                    extensions: [[$class: 'SparseCheckoutPaths',
-                    sparseCheckoutPaths: [[path:"/${PATH}"]]]],
-					          userRemoteConfigs: [[url: "${GITHUB_URL}"]])
+                   checkout scmGit(branches: [[name: '*/main']], extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: 
+                                [[path: '/${PATH}']]]], userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest']])
             }
         }
 
