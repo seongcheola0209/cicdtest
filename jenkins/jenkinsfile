@@ -50,14 +50,9 @@ pipeline {
         }
 
         stage('컨테이너 빌드') {
-            steps {
-                
-                sh "mkdir -p ${CLASS_NAME}/build/docker/"
-                // jar 파일 복사
-                sh "cp ./build/libs/app-0.0.1-SNAPSHOT.jar ./${CLASS_NAME}/build/docker/app-0.0.1-SNAPSHOT.jar"
-
+            steps {               
                 // 도커 빌드
-                sh "docker build -t ${DOCKERHUB_USERNAME}/api-tester:v1.0.0 ./${CLASS_NAME}/build/docker"
+                sh "docker build -t ${DOCKERHUB_USERNAME}/api-tester:v1.0.0 . -f Dockerfile"
             }
         }
 
@@ -65,7 +60,7 @@ pipeline {
             steps {
                 // DockerHub로 이미지 업로드
                 // 항상 본인의 Docker Hub에서 빌드가 되도록 수정 됨
-                sh "docker push ${DOCKERHUB_USERNAME}/api-tester:v1.0.0"
+                sh "docker push ${DOCKERHUB_USERNAME}/api-tester:v2.0.0"
             }
         }
 
