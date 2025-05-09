@@ -64,12 +64,12 @@ pipeline {
             }
         }
 
-        stage('릴리즈파일 체크아웃') {
-            steps {
-                   checkout scmGit(branches: [[name: '*/main']], extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: 
-                                [[path: '/${CLASS_NAME}']]]], userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest.git']])
-            }
-        }
+      //  stage('릴리즈파일 체크아웃') {
+      //      steps {
+      //             checkout scmGit(branches: [[name: '*/main']], extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: 
+      //                          [[path: '/${CLASS_NAME}']]]], userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest.git']])
+      //      }
+      //  }
 
         stage('쿠버네티스 배포') {
             steps {
