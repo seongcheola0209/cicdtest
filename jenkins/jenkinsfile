@@ -73,7 +73,7 @@ pipeline {
             steps {
                 checkout scmGit(branches: [[name: '*/main']],
                     extensions: [[$class: 'SparseCheckoutPaths',
-                    sparseCheckoutPaths: [[path: "/${CLASS_NAME}"]]]],
+                    sparseCheckoutPaths: [[path: "/]]]],
 					          userRemoteConfigs: [[url: "${GITHUB_URL}"]])
             }
         }
