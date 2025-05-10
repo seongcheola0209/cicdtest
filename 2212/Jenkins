@@ -52,7 +52,7 @@ pipeline {
         stage('컨테이너 빌드') {
             steps {               
                 // 도커 빌드
-                sh "docker build -t ${DOCKERHUB_USERNAME}/api-tester:v2.0.0 . -f Dockerfile"
+                sh "docker build -t ${DOCKERHUB_USERNAME}/api-tester:v1.0.2212 . -f Dockerfile"
             }
         }
 
