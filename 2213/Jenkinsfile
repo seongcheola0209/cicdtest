@@ -16,7 +16,6 @@ pipeline {
     }
 
     stages {
-
         stage('Username 확인') {
             steps {
                 script {
@@ -37,9 +36,14 @@ pipeline {
             }
         }
 
-        stage('배포 시작') {
+       // input 
+       // - message: "string"        버튼에 출력되는 글자를 지정한다 
+       // - ok : "string:            다음 단계로 진행할 버튼을 띄우고 버튼의 label 은 "string" 이다. 
+       //                            아울러 "string" "Abort" 형태로 버튼을 띄운다.
+       stage('배포 시작') {
             steps {
-                input message: '수동배포 시작', ok: "Yes"
+		// 사용자로 부터 빌드중에 입력을 받는다.     
+                input message: '수동배포 시작', ok: "계속"
             }
         }
 
@@ -50,6 +54,12 @@ pipeline {
             }
         }
 
+	// input 의 parameter 
+        // - message : 입력 버튼에 출력되는 글자를 지정한다. 
+	// - 타입 : 아래의 예제는 booleanParam을 받겠다는 의미임 
+	// - name : 버튼의 이름을 지정한다.
+	// - defaultValue : 입력되는 값이 없을 경우 세팅되는 기본값이다.
+	// - dscription : 설명문이다. 
         stage('전환여부 확인') {
             steps {
                 script {
@@ -66,8 +76,8 @@ pipeline {
                 script {
                     returnValue = input message: 'Blue 롤백?', parameters: [choice(choices: ['done', 'rollback'], name: 'IS_ROLLBACk')]
                     if (returnValue == "done") {
-                        sh "kubectl delete -f ./${CLASS_NUM}/deploy/k8s/blue/deployment.yaml"
-                        sh "kubectl delete -f ./${CLASS_NUM}/deploy/k8s/green/service.yaml"
+                        sh "kubectl delete -f ./${CLASS_NUM}/blue/deployment.yaml"
+                        sh "kubectl delete -f ./${CLASS_NUM}/green/service.yaml"
                         sh "kubectl patch -n anotherclass-221 svc api-tester -p '{\"metadata\": {\"labels\": {\"version\": \"2.0.0\"}}}'"
                         sh "kubectl patch -n anotherclass-221 cm api-tester-properties -p '{\"metadata\": {\"labels\": {\"version\": \"2.0.0\"}}}'"
                         sh "kubectl patch -n anotherclass-221 secret api-tester-postgresql -p '{\"metadata\": {\"labels\": {\"version\": \"2.0.0\"}}}'"
