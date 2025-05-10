@@ -32,7 +32,7 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/main']],
                         extensions: [[$class: 'SparseCheckoutPaths',
                                       sparseCheckoutPaths: [[path: "/${CLASS_NUM}"]]]],
-                        userRemoteConfigs: [[url: "${GITHUB_URL}"]])
+                        userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest.git']])
             }
         }
 
