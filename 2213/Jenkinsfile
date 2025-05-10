@@ -28,13 +28,15 @@ pipeline {
         }
 	    
         stage('릴리즈파일 체크아웃') {
+	   steps {	
                // 릴리즈파일 체크아웃 
-              checkout scmGit(branches: [[name: "*/main"]], 
+               checkout scmGit(branches: [[name: "*/main"]], 
                     extensions: [[$class: "SparseCheckoutPaths", 
                     // 레포지토리 중에 GITHUB_URL 부분만 CHECKOUT 함 
                     sparseCheckoutPaths: [[path: "/${CLASS_NUM}"]]]], 
                     userRemoteConfigs: [[url: "${GITHUB_URL}"]])   
-              sh "sleep 1"           
+               sh "sleep 1"  
+	   }		   
         }
 
         stage('쿠버네티스 Blue배포') {
