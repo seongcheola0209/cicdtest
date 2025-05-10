@@ -37,13 +37,16 @@ pipeline {
         }
 
        // input 
+       // - id : 외부 처리시 식별자로 사용될 인자	    
        // - message: "string"        버튼에 출력되는 글자를 지정한다 
        // - ok : "string:            다음 단계로 진행할 버튼을 띄우고 버튼의 label 은 "string" 이다. 
-       //                            아울러 "string" "Abort" 형태로 버튼을 띄운다.
+       //                            진행하지 않을 때 클릭할 "Abort" 라는 버튼도 같이 출력된다. 
        stage('배포 시작') {
             steps {
-		// 사용자로 부터 빌드중에 입력을 받는다.     
-                input message: '수동배포 시작', ok: "계속"
+		// 사용자로 부터 빌드중에 입력을 받는다. 
+		// - "수동배포"는 입력박스의 이름이다.
+		// - "계속" 이라는 버튼과 "Abort" 라는 버튼이 보인다   
+                input message: '수동배포 시작', ok: "계속" 
             }
         }
 
@@ -60,11 +63,22 @@ pipeline {
 	// - name : 버튼의 이름을 지정한다.
 	// - defaultValue : 입력되는 값이 없을 경우 세팅되는 기본값이다.
 	// - dscription : 설명문이다. 
+
+        // parmeters
+	// - string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+        // - text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
+        // - booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+        // - choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+        // - password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
+	    
         stage('전환여부 확인') {
             steps {
                 script {
-                    returnValue = input message: 'Green 전환?', ok: "Yes", parameters: [booleanParam(defaultValue: true, name: 'IS_SWITCHED')]
-                    if (returnValue) {
+	            // - "IS_SWITCH" 라는 체크박스가 띄어진다. 즉 이 체크박스를 선택하면 true가 리턴되고 그렇지 않으면 false가 리턴된다. 
+	            // - 아울러 "Green 전환 ?" 이라는 입력버튼 박스를 통해 계속 진행여부를 체크하게 된다. 
+                    returnValue = input message: 'Green 전환?', ok: "Yes", parameters: [booleanParam(name: 'IS_SWITCHED', defaultValue: true)]
+                    // IS_SWITCH 가 true 값을 가지게 되면 아래와 같은 작업을 실행한다. 
+		    if (returnValue) {
                         sh "kubectl patch -n anotherclass-221 svc api-tester -p '{\"spec\": {\"selector\": {\"blue-green-no\": \"2\"}}}'"
                     }
                 }
@@ -73,6 +87,7 @@ pipeline {
 
         stage('롤백 확인') {
             steps {
+		// - choices: ['done', 'rollback'] 은 콤보박스를 출력하여 사용자로 하여금 하나를 고르게 한다.     
                 script {
                     returnValue = input message: 'Blue 롤백?', parameters: [choice(choices: ['done', 'rollback'], name: 'IS_ROLLBACk')]
                     if (returnValue == "done") {
