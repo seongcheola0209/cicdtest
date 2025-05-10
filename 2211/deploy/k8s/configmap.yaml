@@ -8,7 +8,7 @@ metadata:
     component: backend-server
     name: api-tester
     instance: api-tester-2211
-    version: 1.0.1
+    version: 1.0.2211
     managed-by: kubectl
 data:
   spring_profiles_active: "dev"
