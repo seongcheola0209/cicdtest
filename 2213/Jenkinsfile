@@ -29,11 +29,11 @@ pipeline {
 	    
         stage('쿠버네티스 Blue배포') {
             steps {
-                sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/blue/namespace.yaml"
-                sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/blue/configmap.yaml"
-                sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/blue/secret.yaml"
-                sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/blue/service.yaml"
-                sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/blue/deployment.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/blue/namespace.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/blue/configmap.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/blue/secret.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/blue/service.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/blue/deployment.yaml"
             }
         }
 
@@ -45,8 +45,8 @@ pipeline {
 
         stage('쿠버네티스 Green배포') {
             steps {
-	        sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/green/deployment.yaml"
-                sh "kubectl apply -f ./${CLASS_NUM}/deploy/k8s/green/service.yaml"
+	        sh "kubectl apply -f ./${CLASS_NUM}/green/deployment.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/green/service.yaml"
             }
         }
 
