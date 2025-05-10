@@ -28,11 +28,13 @@ pipeline {
         }
 
         stage('릴리즈파일 체크아웃') {
-            steps {
-                checkout scmGit(branches: [[name: '*/main']],
-                        extensions: [[$class: 'SparseCheckoutPaths',
-                                      sparseCheckoutPaths: [[path: "/${CLASS_NUM}"]]]],
-                        userRemoteConfigs: [[url: 'https://github.com/seongcheola0209/cicdtest.git']])
+               // 릴리즈파일 체크아웃 
+              checkout scmGit(branches: [[name: "*/main"]], 
+                    extensions: [[$class: "SparseCheckoutPaths", 
+                    // 레포지토리 중에 GITHUB_URL 부분만 CHECKOUT 함 
+                    sparseCheckoutPaths: [[path: "/${CLASS_NUM}"]]]], 
+                    userRemoteConfigs: [[url: "${GITHUB_URL}"]])   
+              sh "sleep 1"
             }
         }
 
