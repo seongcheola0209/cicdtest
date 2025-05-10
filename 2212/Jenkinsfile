@@ -66,6 +66,7 @@ pipeline {
 
         stage('릴리즈파일 체크아웃') {
            steps {
+              sh "sleep 1"
                    checkout scmGit(branches: [[name: '*/main']], 
                            extensions: [[$class: 'SparseCheckoutPaths',
                             sparseCheckoutPaths: [[path: '/${CLASS_NAME}']]]], 
