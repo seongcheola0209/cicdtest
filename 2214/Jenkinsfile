@@ -1,0 +1,90 @@
+pipeline {
+    agent any
+
+    parameters {
+        // GitHub  사용자명 입력
+        string(name: 'GITHUB_USERNAME',  defaultValue: '', description: 'GitHub  사용자명을 입력하세요.')
+    }
+
+    environment {
+        // 전역값을 넣어 두시면 위 parameters 입력이 필요 없어요. (전체 Jenkinfile에서 해당 내용을 모두 수정해 놓으면 좋습니다.)
+        // GITHUB_USERNAME = ""
+
+        // 아래 부분 수정(x)
+        GITHUB_URL = "https://github.com/${GITHUB_USERNAME}/cicdtest.git"
+        CLASS_NUM = '2214'
+    }
+
+
+    stages {
+
+        stage('Username 확인') {
+            steps {
+                script {
+                    if (!env.GITHUB_USERNAME?.trim()) {
+                        error "[파라미터와 함께 빌드]에 GITHUB_USERNAME를 본인의 username으로 입력해 주세요! 매번 입력이 번거롭다면 Jenkinsfile에서 parameters에 입력 항목을 삭제 하시고 environment에 전역값을 넣은 후 해당 조건문은 삭제해 주세요. "
+                    }
+                }
+            }
+        }
+
+        stage('릴리즈파일 체크아웃') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']],
+                        extensions: [[$class: 'SparseCheckoutPaths',
+                                      sparseCheckoutPaths: [[path: "/${CLASS_NUM}"]]]],
+                        userRemoteConfigs: [[url: "${GITHUB_URL}"]])
+            }
+        }
+
+        stage('쿠버네티스 Blue배포') {
+            steps {
+                sh "kubectl apply -f ./${CLASS_NUM}/deploy/blue/namespace.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/deploy/blue/configmap.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/deploy/blue/secret.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/deploy/blue/service.yaml"
+                sh "kubectl apply -f ./${CLASS_NUM}/deploy/blue/deployment.yaml"
+            }
+        }
+
+        stage('자동배포 시작') {
+            steps {
+                input message: '자동배포 시작', ok: "Yes"
+            }
+        }
+
+        stage('쿠버네티스 Green배포') {
+            steps {
+                sh "kubectl apply -f ./${CLASS_NUM}/deploy/green/deployment.yaml"
+            }
+        }
+
+        stage('Green 배포 확인중') {
+            steps {
+                script {
+                    def returnValue
+                    while (returnValue != "true true"){
+                        returnValue = sh(returnStdout: true, encoding: 'UTF-8', script: "kubectl get -n anotherclass-221 pods -l instance='api-tester-2214',blue-green-no='2' -o jsonpath='{.items[*].status.containerStatuses[*].ready}'")
+                        echo "${returnValue}"
+                        sleep 5
+                    }
+                }
+            }
+        }
+
+        stage('Green 전환 완료') {
+            steps {
+                sh "kubectl patch -n anotherclass-221 svc api-tester-2214 -p '{\"spec\": {\"selector\": {\"blue-green-no\": \"2\"}}}'"
+            }
+        }
+
+        stage('Blue 삭제') {
+            steps {
+                sh "kubectl delete -f ./${CLASS_NUM}/deploy/k8s/blue/deployment.yaml"
+                sh "kubectl patch -n anotherclass-221 svc api-tester-2214 -p '{\"metadata\": {\"labels\": {\"version\": \"2.0.0\"}}}'"
+                sh "kubectl patch -n anotherclass-221 cm api-tester-2214-properties -p '{\"metadata\": {\"labels\": {\"version\": \"2.0.0\"}}}'"
+                sh "kubectl patch -n anotherclass-221 secret api-tester-2214-postgresql -p '{\"metadata\": {\"labels\": {\"version\": \"2.0.0\"}}}'"
+            }
+        }
+    }
+}
